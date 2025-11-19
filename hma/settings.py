@@ -50,16 +50,16 @@ def _get_bool_from_env(var_name, default=False):
     return value.strip().lower() in {"1", "true", "yes", "on"}
 
 
-SESSION_COOKIE_SECURE = _get_bool_from_env("DJANGO_SESSION_COOKIE_SECURE", True)
+SESSION_COOKIE_SECURE = _get_bool_from_env("DJANGO_SESSION_COOKIE_SECURE", False)
 
-CSRF_COOKIE_SECURE = _get_bool_from_env("DJANGO_CSRF_COOKIE_SECURE", True)
+CSRF_COOKIE_SECURE = _get_bool_from_env("DJANGO_CSRF_COOKIE_SECURE", False)
 
 CSRF_TRUSTED_ORIGINS = _get_list_from_env(
     "DJANGO_CSRF_TRUSTED_ORIGINS",
     [],
 )
 
-DEBUG = False
+DEBUG = True
 
 # ALLOWED_HOSTS = [
 #     "academygpt.fleetstudio.com"
