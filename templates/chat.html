@@ -195,6 +195,7 @@
                                             
                                         </div>
                                         <form id="chat-form" method="post">
+                                            {% csrf_token %}
                                             <div id="message-input">
                                                 <input id="query" name="query" type="text" placeholder="Ask AcademyGPT">
                                                 <button disabled id="ask-button" type="submit">Ask</button>
@@ -277,13 +278,14 @@
                 queryInput.disabled = true;
 
                 // Fetch the bot's response
+                const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
                 fetch('/chat/', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded',
-                        'X-CSRFToken': '{{ csrf_token }}'
+                        'X-CSRFToken': csrftoken
                     },
-                    body: `query=${question}` // Ensure your view is set up to receive POST requests
+                    body: `query=${encodeURIComponent(question)}` // Ensure your view is set up to receive POST requests
                 })
                 .then(response => response.json())
                 .then(data => {
