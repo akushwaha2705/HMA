@@ -1,0 +1,66 @@
+version: '3.8'
+
+services:
+
+  qdrant:
+    container_name: qdrant-local
+    image: qdrant/qdrant:latest
+    ports:
+      - "6333:6333"
+    restart: unless-stopped
+    networks:
+      - qdrant_net
+
+  fsai:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: fsai:latest
+    container_name: fsai-app
+    environment:
+      - DJANGO_SETTINGS_MODULE=hma.settings.production
+      - CREATE_INITIAL_USERS=true
+      # add DB envs etc.
+    expose:
+      - "8000"                 # internal only
+    volumes:
+      - hma_static-files:/app/staticfiles      # collectstatic writes here (use existing volume)
+      - /etc/letsencrypt:/etc/letsencrypt
+    depends_on:
+      - qdrant
+    restart: on-failure
+    networks:
+      - qdrant_net
+
+  nginx-proxy:
+    image: nginx:1.24-alpine
+    container_name: nginx-proxy
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - letsencrypt:/etc/letsencrypt:ro
+      - certbot-webroot:/var/www/certbot:ro
+      - hma_static-files:/app/staticfiles:ro   # MUST use same volume name here
+    depends_on:
+      - fsai
+    restart: unless-stopped
+    networks:
+      - qdrant_net
+
+  certbot:
+    image: certbot/certbot:latest
+    container_name: certbot
+    volumes:
+      - letsencrypt:/etc/letsencrypt
+      - certbot-webroot:/var/www/certbot
+    entrypoint: "/bin/sh -c 'trap exit TERM; sleep 1d'"
+    restart: "no"
+    networks:
+      - qdrant_net
+
+volumes:
+  letsencrypt:
+  certbot-webroot:
+  hma_static-files:   # use the existing Docker volume name
