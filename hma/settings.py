@@ -28,10 +28,6 @@ SECURE_HSTS_PRELOAD = True  # Conform to the HSTS preload list which can be subm
 
 SECURE_HSTS_SECONDS = 31536000  # 1 year in seconds
 
-SESSION_COOKIE_SECURE = True
-
-CSRF_COOKIE_SECURE = True
-
 def _get_list_from_env(var_name, default=None):
     """
     Parse a comma-separated environment variable into a list.
@@ -42,6 +38,21 @@ def _get_list_from_env(var_name, default=None):
         return [item.strip() for item in raw_value.split(",") if item.strip()]
     return default or []
 
+
+def _get_bool_from_env(var_name, default=False):
+    """
+    Return a boolean from an environment variable.
+    Accepts truthy strings like 1/true/yes/on (case-insensitive).
+    """
+    value = os.getenv(var_name)
+    if value is None:
+        return default
+    return value.strip().lower() in {"1", "true", "yes", "on"}
+
+
+SESSION_COOKIE_SECURE = _get_bool_from_env("DJANGO_SESSION_COOKIE_SECURE", True)
+
+CSRF_COOKIE_SECURE = _get_bool_from_env("DJANGO_CSRF_COOKIE_SECURE", True)
 
 CSRF_TRUSTED_ORIGINS = _get_list_from_env(
     "DJANGO_CSRF_TRUSTED_ORIGINS",
