@@ -15,7 +15,7 @@ def connect_to_quadrant(collection):
     """
     embedding_function = OpenAIEmbeddings(openai_api_key=KEY)
 
-    client = QdrantClient(url="http://qdrant:6333")
+    client = QdrantClient(url="http://127.0.0.1:6333")
     return Qdrant(client, 
                   collection, 
                   embedding_function)

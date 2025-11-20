@@ -1,8 +1,15 @@
 # knowledge-search-poc
 
 ## Initial setup
-1. Create `secure.py` beside this README with your OpenAI key  
-   `KEY = "sk-..."`  
+1. **Set up OpenAI API Key** (choose one method):
+   - **Recommended**: Create a `.env` file in the `hma/` directory:
+     ```bash
+     OPENAI_API_KEY=sk-your-actual-openai-api-key-here
+     ```
+   - **Alternative**: Create `secure.py` beside this README with:
+     ```python
+     KEY = "sk-..."
+     ```
 2. Create a folder named `knowledge-base/` and drop the PDFs you want to chat with.
 
 ## Local development (no Poetry)

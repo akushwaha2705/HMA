@@ -30,4 +30,10 @@ class DocumentProcessor:
 
     def store_embeddings(self):
         embeddings = OpenAIEmbeddings(openai_api_key=KEY)
-        self.vector_db.from_documents(self.all_splits, embeddings, url="http://qdrant:6333", collection_name=self.collection)
+        # Use the same local Qdrant URL as in connect_to_quadrant for non-Docker dev
+        self.vector_db.from_documents(
+            self.all_splits,
+            embeddings,
+            url="http://127.0.0.1:6333",
+            collection_name=self.collection,
+        )
